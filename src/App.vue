@@ -1,5 +1,6 @@
 <script>
-import { QuillEditor } from "@vueup/vue-quill";
+import { QuillEditor, Quill } from "@vueup/vue-quill";
+import ProcLink from "./util";
 
 export default {
 	components: {
@@ -8,15 +9,27 @@ export default {
 	data() {
 		return {
 			editorOption: {},
-			content: "<h2>I am Example</h2>",
+			content:
+				"<h2>Monsieur, dont le numéro de registre national est, domicile a   </h2>",
 		};
 	},
 	methods: {
 		handleDrop(e) {
 			const txt = e.dataTransfer.getData("Text");
 			const quil = this.$refs.myEditor.getQuill();
-			var selection = quil.getSelection(true);
-			quil.insertEmbed(selection.index, txt);
+			const selection = quil.getSelection(true);
+			// quil.insertEmbed(selection.index, txt);
+
+			ProcLink.blotName = "variable";
+			ProcLink.className = "variable";
+			ProcLink.tagName = "span";
+
+			Quill.register({
+				"formats/proc-link": ProcLink,
+			});
+
+			var text = { text: txt, value: txt };
+			quil.insertEmbed(selection.index, "variable", text);
 		},
 	},
 };
@@ -33,10 +46,10 @@ export default {
 			@drop.prevent>
 		</quill-editor>
 		<div class="variables">
-			<div>hello</div>
-			<div>from</div>
-			<div>world</div>
-			<div>vue</div>
+			<div>Nom</div>
+			<div>Prenom</div>
+			<div>Register national</div>
+			<div>Address postal</div>
 		</div>
 	</div>
 </template>
@@ -52,5 +65,10 @@ export default {
 	color: #242424;
 	user-select: all;
 	cursor: pointer;
+}
+
+.variable {
+	padding: 10px;
+	background: #ddd;
 }
 </style>
